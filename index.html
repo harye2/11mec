@@ -1,0 +1,2534 @@
+
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trials of Mastery</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        body {
+            font-family: 'Press Start 2P', cursive;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(45deg, #1a4040, #00ff4c);
+            color: white;
+            text-align: center;
+        }
+        .container {
+            border: 8px solid #ffcc00;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            background-color: #003300;
+        }
+        h1, h2, h3 {
+            margin-bottom: 20px;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .input-box {
+            padding: 10px;
+            font-size: 1.2em;
+            width: 80%;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            background-color: #ffcc00;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            background-color: #ff9900;
+        }
+        .timer-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: green;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            margin: 0 auto 20px;
+        }
+        .score-counter {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        .level-complete {
+            background-color: rgba(0, 0, 0, 0.8);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+       .level-complete-content {
+    background-color: #003300;
+    border: 8px solid #00ff00;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+        
+        .progress-indicator {
+            font-size: 0.8em;
+            margin-top: 15px;
+        }
+        /* Styles for added features */
+        .player-name {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #ffcc00;
+        }
+        .highest-score {
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            color: #ff9900;
+        }
+        .powerup-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+        }
+        .powerup-btn {
+            padding: 8px 10px;
+            font-size: 0.8em;
+            background-color: #00ff4c;
+            color: white;
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .powerup-btn:hover:not(.disabled) {
+            background-color: #33ff66;
+        }
+        .powerup-btn.disabled {
+            background-color: #333;
+            color: #777;
+            border-color: #777;
+            cursor: not-allowed;
+        }
+        .welcome-container {
+            margin-bottom: 20px;
+        }
+        #start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            cursor: pointer;
+        }
+        #start-screen-content {
+            font-size: 1.5em;
+            color: #ffcc00;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        /* New styles for the game image */
+        .game-image {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        /* Style for game over screen */
+        .game-over {
+            background-color: rgba(0, 0, 0, 0.8);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+   .game-over-content {
+    background-color: #003300;
+    border: 8px solid #ff3300;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+.streak-glow {
+    box-shadow: 0 0 20px #ffcc00, inset 0 0 20px #ffcc00;
+    border: 3px solid #ffcc00 !important;
+    animation: pulseGlow 2s infinite;
+}
+
+.timer-streak {
+    background: linear-gradient(45deg, #ff6b35, #f7931e, #ffcc00) !important;
+    color: white !important;
+    font-weight: bold;
+    box-shadow: 0 0 15px #ffcc00;
+    animation: rotateGradient 3s linear infinite;
+}
+
+.energy-effect {
+    position: relative;
+    overflow: visible;
+}
+
+.energy-effect::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, #00ff4c, #ffcc00, #00ff4c);
+    border-radius: 50%;
+    z-index: -1;
+    animation: rotateEnergy 2s linear infinite;
+    opacity: 0.7;
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 20px #ffcc00, inset 0 0 20px #ffcc00; }
+    50% { box-shadow: 0 0 30px #ffcc00, inset 0 0 30px #ffcc00; }
+    100% { box-shadow: 0 0 20px #ffcc00, inset 0 0 20px #ffcc00; }
+}
+
+@keyframes rotateGradient {
+    0% { background: linear-gradient(0deg, #ff6b35, #f7931e, #ffcc00); }
+    25% { background: linear-gradient(90deg, #ff6b35, #f7931e, #ffcc00); }
+    50% { background: linear-gradient(180deg, #ff6b35, #f7931e, #ffcc00); }
+    75% { background: linear-gradient(270deg, #ff6b35, #f7931e, #ffcc00); }
+    100% { background: linear-gradient(360deg, #ff6b35, #f7931e, #ffcc00); }
+}
+
+@keyframes rotateEnergy {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.timer-smooth {
+    transition: all 0.5s ease-in-out;
+}
+
+.streak-indicator {
+    font-size: 0.9em;
+    color: #ffcc00;
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+
+
+/* 🔥 Halo ardiente para Inferno Streak */
+@keyframes infernoGlow {
+  0% { box-shadow: 0 0 10px #ff3300, 0 0 20px #ff6600; }
+  50% { box-shadow: 0 0 20px #ff6600, 0 0 40px #ff9933; }
+  100% { box-shadow: 0 0 10px #ff3300, 0 0 20px #ff6600; }
+}
+
+.inferno-effect {
+  animation: infernoGlow 1.5s infinite alternate;
+}
+
+
+
+
+
+/* 🌌 Partículas cósmicas para Cosmic Streak */
+@keyframes starTwinkle {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(1.5); opacity: 0; }
+}
+
+.particle {
+  position: fixed;
+  width: 5px;
+  height: 5px;
+  background: #bb00ff;
+  border-radius: 50%;
+  animation: starTwinkle 2s infinite;
+  z-index: 9998;
+}
+
+
+
+/* ⚡ Resplandor eléctrico en el timer */
+@keyframes thunderGlow {
+  0% { box-shadow: 0 0 15px #00ccff, 0 0 30px #0066ff; }
+  50% { box-shadow: 0 0 30px #00ccff, 0 0 60px #33ffff; }
+  100% { box-shadow: 0 0 15px #00ccff, 0 0 30px #0066ff; }
+}
+
+.thunderstorm-effect {
+  animation: thunderGlow 1.5s infinite alternate;
+}
+
+/* ⚡ Ondas concéntricas de trueno */
+@keyframes ripple {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+.ripple {
+  position: absolute;
+  border: 3px solid rgba(0, 204, 255, 0.6);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  animation: ripple 2s linear infinite;
+  z-index: 0;
+}
+
+
+/* 🌊 Fondo animado tipo océano */
+@keyframes oceanWaves {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+./* 🔥 Inferno Streak */
+.container.inferno-background {
+  background: linear-gradient(45deg, #660000, #ff3300, #660000);
+  background-size: 300% 300%;
+  animation: infernoWaves 6s ease infinite;
+}
+@keyframes infernoWaves {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+/* ⚡ Thunderstorm Streak (Cielo eléctrico) */
+/* ⚡ Thunderstorm Streak (Cielo eléctrico animado) */
+.container.stormy-background {
+  background: radial-gradient(circle at 30% 30%, #00ccff 0%, #00111a 50%, #000000 100%);
+  background-size: 400% 400%;
+  animation: electricWaves 6s ease infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Movimiento eléctrico del fondo */
+@keyframes electricWaves {
+  0% { background-position: 0% 0%; filter: brightness(1); }
+  50% { background-position: 100% 100%; filter: brightness(1.3); }
+  100% { background-position: 0% 0%; filter: brightness(1); }
+}
+
+/* ⚡ Rayos verticales */
+.lightning-bolt {
+  position: absolute;
+  width: 3px;
+  height: 120%;
+  top: -10%;
+  background: linear-gradient(to bottom, #00ffff, transparent);
+  opacity: 0.8;
+  animation: flashBolt 0.6s linear infinite;
+  z-index: 2;
+}
+
+/* Animación destello del rayo */
+@keyframes flashBolt {
+  0%, 100% { opacity: 0; }
+  10% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* 🌌 Cosmic Streak */
+.container.cosmic-background {
+  background: radial-gradient(circle, #0b0033, #000000, #1a0033);
+  background-size: 200% 200%;
+  animation: cosmicPulse 15s ease infinite;
+}
+@keyframes cosmicPulse {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+
+
+/* ⚡ Resplandor eléctrico en el timer */
+@keyframes thunderGlow {
+  0% { box-shadow: 0 0 15px #00ccff, 0 0 30px #0066ff; }
+  50% { box-shadow: 0 0 30px #33ccff, 0 0 60px #00ffff; }
+  100% { box-shadow: 0 0 15px #00ccff, 0 0 30px #0066ff; }
+}
+
+.thunderstorm-effect {
+  animation: thunderGlow 1.5s infinite alternate;
+}
+
+/* ⚡ Destellos eléctricos suaves en el fondo */
+@keyframes softLightning {
+  0%, 80%, 100% { opacity: 0; }
+  40% { opacity: 0.4; }
+  60% { opacity: 0.7; }
+}
+
+.lightning-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(0,204,255,0.2), transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  animation: softLightning 6s infinite;
+  z-index: 1;
+}
+
+/* 🔥 Fondo animado estilo fuego */
+@keyframes fireFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.container.inferno-background {
+  background: linear-gradient(45deg, #330000, #660000, #cc3300, #ff6600, #ff3300, #660000, #330000);
+  background-size: 600% 600%;
+  animation: fireFlow 5s ease infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 🔥 Chispas/partículas de fuego */
+.fire-spark {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 200, 0, 0.9);
+  box-shadow: 0 0 10px rgba(255, 120, 0, 0.8);
+  animation: rise 2s linear forwards;
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(0) scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-120px) scale(1.2);
+    opacity: 0;
+  }
+}
+
+
+    </style>
+<style>
+    @keyframes epicFadeOut {
+        from { opacity: 1; transform: scale(1); }
+        to { opacity: 0; transform: scale(0.8); }
+    }
+</style></head>
+<body>
+    <!-- Start screen for audio initialization -->
+    <div id="start-screen">
+        <div id="start-screen-content">
+            Tap to start the adventure!
+        </div>
+    </div>
+
+    <!-- Audio elements -->
+    <audio id="background-music" loop>
+    <source src="https://dl.dropboxusercontent.com/scl/fi/v3cof3kqwz4fozyclaeig/Press-Play-16-Bit-Arcade-No-Copyright-Music.mp3?rlkey=bpjsisstufv7om4pb954a8u2b&st=43ah7486" type="audio/mp3">
+</audio>
+
+    
+   <audio id="correct-sound">
+    <source src="https://dl.dropboxusercontent.com/scl/fi/rurdyi741m2lja9ccmxvj/Correct-Answer-Sound-Effect.mp3?rlkey=eiu254jzz26g4yqoita04ncb7&st=guya9v63" type="audio/mp3">
+</audio>
+
+    
+    <!-- Incorrect answer sound -->
+   <audio id="incorrect-sound">
+    <source src="https://dl.dropboxusercontent.com/scl/fi/lqwt9s6ozvfzu7mxftdqv/Error-Sound-Effect-Non-copyright-sound-effects-TCW-SoundEffects.mp3?rlkey=qyjqzt0qu2ackt33koalcfzct&st=ajpz8dad" type="audio/mp3">
+</audio>
+
+
+<!-- Victory sound -->
+<audio id="victory-sound">
+    <source src="https://dl.dropboxusercontent.com/scl/fi/9a0fdivef2xnnvfvdvn54/Tank-Stars-sound-effects-Victory.mp3?rlkey=skrmv6h5775rp69yfo6oz2ehy&st=rgi6izlx" type="audio/mp3">
+    Your browser does not support the audio element.
+</audio>
+    
+    <div class="container">
+        <!-- Game image - only visible on start screen -->
+       <img id="game-header-image" class="game-image" 
+     src="https://i.postimg.cc/JzFDW597/068ea439b0218fdd52c1434444600b23.png" 
+     alt="Trials of Mastery">
+
+        
+        <h1>Trials of Mastery</h1>
+        <p>Prove your skills and master the trials. Will you succeed?</p>
+        
+        <!-- Player name input section -->
+        <div id="player-setup">
+            <input type="text" class="input-box" id="player-name-input" placeholder="Enter your name...">
+            <div class="highest-score">Highest Score: <span id="highest-score">78</span></div>
+        </div>
+        
+        <button id="start-btn" class="btn">START</button>
+        <button id="view-leaderboard-start" class="btn" style="margin-top:10px;">🏆 Leaderboard</button>
+
+        <div id="game" class="hidden">
+            <!-- Welcome message with player name -->
+            <div class="player-name">Good luck, <span id="player-name-display">Player</span>!</div>
+            
+            <h2 id="level-title">Awakening</h2>
+            <div class="timer-circle" id="timer">60</div>
+            <div id="game-clock" style="font-size:0.8em; color:#ffcc00; margin-top:5px;"></div>
+            <div class="score-counter">Score: <span id="score">0</span></div>
+            <div class="progress-indicator">Word <span id="current-word-num">1</span>/10</div>
+            <h3 id="word-to-translate">Word</h3>
+            <input type="text" class="input-box" id="answer" placeholder="Enter translation...">
+            
+            <!-- Power-up buttons -->
+            <div class="powerup-container">
+                <button id="bonus-time-btn" class="powerup-btn">Bonus Time (+10s)</button>
+                <button id="skip-word-btn" class="powerup-btn">Skip Word</button>
+            </div>
+            
+            <button id="submit-btn" class="btn">SUBMIT</button>
+            <p id="feedback"></p>
+<!-- 🏆 Leaderboard container -->
+<!-- 🏆 Top 3 Live -->
+<div id="top3-display" style="margin-top:20px; padding:15px; background:rgba(0,0,0,0.3); border-radius:10px; border:2px solid #ffcc00;">
+    <h3 style="color:#ffcc00; font-size:0.8em; margin-bottom:10px;">🏆 TOP 3 🏆</h3>
+    <div id="top3-list" style="font-size:0.6em; color:#ffffff; line-height:1.8;">
+        <p>Loading top players...</p>
+    </div>
+</div>
+
+        </div>
+    </div>
+
+    <div id="level-complete" class="level-complete hidden">
+        <div class="level-complete-content">
+            <h2>Trial Completed!</h2>
+            <p>You have mastered this level.</p>
+            <p>Score: <span id="level-score">0</span></p>
+            <button id="next-level-btn" class="btn">NEXT TRIAL</button>
+        </div>
+    </div>
+
+    <!-- Game Over screen -->
+    <div id="game-over" class="game-over hidden">
+        <div class="game-over-content">
+            <h2>GAME OVER</h2>
+            <p>Too many mistakes!</p>
+            <p>Your score: <span id="final-score">0</span></p>
+            <button id="try-again-btn" class="btn">TRY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+
+        // Variable for music
+        let backgroundMusic;
+        let correctSound;
+        let incorrectSound;
+        let musicEnabled = true;
+        
+        // Initialize background music
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('level-complete').classList.add('hidden');
+            document.getElementById('game-over').classList.add('hidden');
+            
+            // Load highest score from localStorage
+            const highestScore = localStorage.getItem('highestScore') || 0;
+            document.getElementById('highest-score').textContent = highestScore;
+            
+            // Initialize background music
+            backgroundMusic = document.getElementById('background-music');
+            correctSound = document.getElementById('correct-sound');
+            incorrectSound = document.getElementById('incorrect-sound');
+	    victorySound = document.getElementById('victory-sound');
+            
+            // Add event for start screen to initialize music
+            document.getElementById('start-screen').addEventListener('click', function() {
+                // Hide start screen
+                this.style.display = 'none';
+                
+                // Play music
+                backgroundMusic.play()
+                    .then(() => console.log('Music started successfully'))
+                    .catch(e => console.log('Error playing music:', e));
+            });
+        });
+        
+        document.getElementById('start-btn').addEventListener('click', startGame);
+        document.getElementById('submit-btn').addEventListener('click', checkAnswer);
+        document.getElementById('next-level-btn').addEventListener('click', loadNextLevel);
+        document.getElementById('answer').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+        document.getElementById('try-again-btn').addEventListener('click', tryAgain);
+        
+        // Events for power-up buttons
+        document.getElementById('bonus-time-btn').addEventListener('click', addBonusTime);
+        document.getElementById('skip-word-btn').addEventListener('click', skipWord);
+
+        const levels = [
+            { 
+  name: 'Awakening', 
+  time: 90, 
+  words: {
+  'find': ['encontrar'],
+'here': ['aquí'],
+'today': ['hoy'],
+'bookstore': ['librería'],
+'classroom': ['salón de clase', 'aula'],
+'do not': ['no hacer', 'no'],
+'does not': ['no hace', 'no'],
+'take': ['tomar', 'llevar'],
+'of': ['de'],
+'the': ['el', 'la', 'los', 'las'],
+'beach': ['playa'],
+'we': ['nosotros', 'nosotras'],
+'love': ['amar', 'encantar'],
+'you': ['tú', 'usted', 'ustedes'],
+'a': ['un', 'una'],
+'cake': ['pastel', 'torta'],
+
+  } 
+},
+           { 
+  name: 'Runes', 
+  time: 80, 
+  words: {
+'pet shop': ['tienda de mascotas'],
+'picture': ['imagen', 'foto'],
+'zoo': ['zoológico'],
+'lesson': ['lección', 'clase'],
+'with': ['con'],
+'room': ['habitación', 'cuarto', 'sala'],
+'school': ['escuela', 'colegio'],
+'mall': ['centro comercial'],
+'playground': ['patio de juegos', 'parque infantil'],
+'candy bag': ['bolsa de dulces'],
+'box': ['caja'],
+'big': ['grande'],
+  } 
+},
+            { 
+  name: 'Adept', 
+  time: 70, 
+  words: {
+'lesson': ['lección', 'clase'],
+'with': ['con'],
+'room': ['habitación', 'cuarto', 'sala'],
+'school': ['escuela', 'colegio'],
+'mall': ['centro comercial'],
+'playground': ['patio de juegos', 'parque infantil'],
+'candy bag': ['bolsa de dulces'],
+'box': ['caja'],
+'big': ['grande'],
+'bedroom': ['habitación', 'dormitorio'],
+'breakfast': ['desayuno'],
+'sports center': ['centro deportivo']
+  } 
+},
+           { 
+  name: 'Guardian', 
+  time: 60, 
+  words: {
+'take': ['tomar', 'llevar'],
+'of': ['de'],
+'the': ['el', 'la', 'los', 'las'],
+'beach': ['playa'],
+'we': ['nosotros', 'nosotras'],
+'love': ['amar', 'encantar'],
+'you': ['tú', 'usted', 'ustedes'],
+'a': ['un', 'una'],
+'cake': ['pastel', 'torta'],
+'pet shop': ['tienda de mascotas'],
+'picture': ['imagen', 'foto'],
+'zoo': ['zoológico'],
+  } 
+},
+            { 
+  name: 'Spells', 
+  time: 50, 
+  words: {
+'find': ['encontrar'],
+'here': ['aquí'],
+'today': ['hoy'],
+'bookstore': ['librería'],
+'classroom': ['salón de clases', 'aula', 'salon de clases'],
+'do not': ['no'],
+'does not': ['no'],
+'take': ['tomar', 'llevar'],
+'of': ['de'],
+'the': ['el', 'la', 'los', 'las'],
+'beach': ['playa'],
+'we': ['nosotros', 'nosotras'],
+'love': ['amar', 'encantar'],
+'you': ['tú', 'usted', 'ustedes'],
+'a': ['un', 'una'],
+'cake': ['pastel', 'torta'],
+  } 
+},
+            { 
+  name: 'Master', 
+  time: 50, 
+  words: {
+'find': ['encontrar'],
+'here': ['aquí'],
+'today': ['hoy'],
+'bookstore': ['librería'],
+'classroom': ['salón de clases', 'aula', 'salon de clases'],
+'do not': ['no'],
+'does not': ['no'],
+'take': ['tomar', 'llevar'],
+'of': ['de'],
+'the': ['el', 'la', 'los', 'las'],
+'beach': ['playa'],
+'we': ['nosotros', 'nosotras'],
+'love': ['amar', 'encantar'],
+'you': ['tú', 'usted', 'ustedes'],
+'a': ['un', 'una'],
+  } 
+},
+            { 
+  name: 'Elder', 
+  time: 50, 
+  words: {
+    'cake': ['pastel', 'torta'],
+'pet shop': ['tienda de mascotas'],
+'picture': ['imagen', 'foto'],
+'zoo': ['zoológico'],
+'lesson': ['lección', 'clase', 'leccion'],
+'with': ['con'],
+'room': ['habitación', 'cuarto', 'sala'],
+'school': ['escuela', 'colegio'],
+'mall': ['centro comercial'],
+'playground': ['patio de juegos', 'parque infantil'],
+'candy bag': ['bolsa de dulces'],
+'box': ['caja'],
+'big': ['grande'],
+'bedroom': ['habitación', 'dormitorio'],
+'breakfast': ['desayuno'],
+'sports center': ['centro deportivo']
+  } 
+},
+        ];
+
+        let currentLevel = 0;
+let playerName = 'Player';
+        let score = 0;
+        let levelScore = 0;
+        let timeLeft;
+        let timerInterval;
+        let currentWord = '';
+        let selectedWords = [];
+        let wordIndex = 0;
+        
+        // Variables for power-ups
+        let bonusTimeUsed = false;
+        let skipWordUsed = false;
+        
+        // Variable for tracking errors
+        let errorCount = 0;
+let magicEnergy = 5; // Energía mágica inicial
+let isRecovering = false; // Estado de recuperación
+let difficultWords = {}; // Palabras marcadas como difíciles
+let wordFailCount = {}; // Contador de fallos por palabra
+let eventActive = false; // Si hay evento activo
+let currentEvent = null; // Tipo de evento actual
+let currentStreak = 0; // Racha actual de respuestas consecutivas
+let maxStreak = 0; // Racha máxima alcanzada en la sesión
+let streakLevels = [3, 5, 7, 10]; // Niveles de racha para efectos especiales
+let eventTimeLeft = 0; // Tiempo restante del evento
+// Palabras usadas por nivel (evita repetir hasta agotar el pool)
+const usedWordsByLevel = {};
+        
+        function startGame() {
+            // Hide the game image when starting the game
+            document.getElementById('game-header-image').classList.add('hidden');
+                // Ocultar el botón del leaderboard durante el juego
+    document.getElementById('view-leaderboard-start').classList.add('hidden');
+            // Stop music when game starts
+            if (backgroundMusic && musicEnabled) {
+                backgroundMusic.pause();
+            }
+            
+            // Get player name
+            playerName = document.getElementById('player-name-input').value.trim() || 'Player';
+            document.getElementById('player-name-display').textContent = playerName;
+            
+            currentLevel = 0;
+            score = 0;
+            document.getElementById('score').textContent = score;
+            document.getElementById('player-setup').classList.add('hidden');
+            document.getElementById('start-btn').classList.add('hidden');
+            document.getElementById('game').classList.remove('hidden');
+            document.getElementById('level-complete').classList.add('hidden'); // Ensure level-complete is hidden
+            document.getElementById('game-over').classList.add('hidden'); // Ensure game-over is hidden
+            
+            // Reset power-ups
+            resetPowerups();
+            
+            // Reset error count
+            errorCount = 0;
+
+magicEnergy = 5;
+isRecovering = false;
+difficultWords = JSON.parse(localStorage.getItem('difficultWords') || '{}');
+wordFailCount = JSON.parse(localStorage.getItem('wordFailCount') || '{}');
+eventActive = false;
+currentEvent = null;
+currentStreak = 0;
+maxStreak = 0;
+
+
+            startTop3Updates();
+            loadLevel();
+        }
+
+
+
+function loadLevel() {
+    document.getElementById('view-leaderboard-start').classList.add('hidden');
+    levelScore = 0;
+    wordIndex = 0;
+    
+    // Reset power-ups for each level
+    resetPowerups();
+    
+    // Reset error count for each level
+    errorCount = 0;
+    
+    const level = levels[currentLevel];
+    document.getElementById('level-title').textContent = level.name;
+    timeLeft = level.time;
+    updateTimer();
+    
+    selectWordsWithDifficulty();
+    // updateEnergyDisplay(); ← si no tienes esta función, comenta esta línea también
+    
+    nextWord();
+    startTimer(); // Aquí se activa el conteo regresivo correctamente
+}
+
+        function loadNextLevel() {
+            currentLevel++;
+            if (currentLevel < levels.length) {
+                document.getElementById('level-complete').classList.add('hidden');
+                loadLevel();
+            } else {
+                // Game completed
+                updateHighestScore();
+                showEpicVictoryScreen();
+                document.getElementById('level-complete').classList.add('hidden');
+                document.getElementById('game').classList.add('hidden');
+                document.getElementById('player-setup').classList.remove('hidden');
+                document.getElementById('start-btn').classList.remove('hidden');
+// Mostrar el botón leaderboard cuando se regresa al menú principal
+document.getElementById('view-leaderboard-start').classList.remove('hidden');
+
+                
+                // Show the game image again when returning to start screen
+                document.getElementById('game-header-image').classList.remove('hidden');
+                
+                // Play music again when returning to start screen
+                if (backgroundMusic && musicEnabled) {
+                    backgroundMusic.play().catch(e => console.log('Error playing music:', e));
+                }
+            }
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+                if (timeLeft <= 0) gameOver();
+            }, 1000);
+        }
+
+        function updateTimer() {
+    const timerCircle = document.getElementById('timer');
+    timerCircle.textContent = timeLeft;
+    
+    // Solo cambiar color de fondo si no hay efectos de racha activos
+    if (!timerCircle.classList.contains('timer-streak')) {
+        if (timeLeft <= 5) {
+            timerCircle.style.backgroundColor = 'red';
+        } else if (timeLeft <= 30) {
+            timerCircle.style.backgroundColor = 'yellow';
+        } else {
+            timerCircle.style.backgroundColor = 'green';
+        }
+    }
+    
+    // Mantener transición suave
+    timerCircle.classList.add('timer-smooth');
+
+// Mostrar fecha y hora
+    }
+
+
+  function nextWord() {
+    if (wordIndex < selectedWords.length) {
+        let next = selectedWords[wordIndex];
+        
+        // 🔒 Evitar repetir la misma palabra si el arreglo no cambia correctamente
+        if (next === currentWord) {
+            wordIndex++;
+            if (wordIndex >= selectedWords.length) {
+                levelComplete();
+                return;
+            }
+            next = selectedWords[wordIndex];
+        }
+
+        currentWord = next;
+        document.getElementById('word-to-translate').textContent = currentWord;
+        document.getElementById('feedback').textContent = '';
+        // updateWordCounter(); ← eliminada porque no existe
+    } else {
+        levelComplete();
+    }
+}
+
+
+        
+function checkAnswer() {
+    const userAnswer = document.getElementById('answer').value.trim().toLowerCase();
+
+    // Seleccionar el mapeo adecuado según modo de recuperación
+    const mapping = isRecovering ? (levels[0] && levels[0].words) : (levels[currentLevel] && levels[currentLevel].words);
+    const correctAnswers = mapping ? mapping[currentWord] : undefined;
+
+    // Si no hay mapeo para la palabra actual, registrar y tratar como incorrecta segura
+    if (!Array.isArray(correctAnswers)) {
+        console.warn('checkAnswer: no mapping found for word', currentWord, 'level', isRecovering ? 0 : currentLevel);
+        document.getElementById('feedback').textContent = 'No mapping for this word.';
+        document.getElementById('feedback').style.color = '#ff9900';
+        handleIncorrectAnswer([]);
+        return;
+    }
+
+    // Comparar respuestas en minúsculas
+    const normalized = correctAnswers.map(a => a.toLowerCase());
+    if (normalized.includes(userAnswer)) {
+        handleCorrectAnswer();
+    } else {
+        handleIncorrectAnswer(correctAnswers);
+    }
+}
+
+
+function handleCorrectAnswer() {
+    if (isRecovering) {
+        // Modo recuperación
+        recoveryWordsCorrect++;
+        currentRecoveryIndex++;
+        
+        document.getElementById('feedback').textContent = `Correct! Energy recovering... (${recoveryWordsCorrect}/3)`;
+        document.getElementById('feedback').style.color = '#00ff00';
+        
+        correctSound.currentTime = 0;
+        correctSound.play().catch(e => console.log('Error playing correct sound:', e));
+        
+        if (recoveryWordsCorrect >= 3) {
+            completeEnergyRecovery();
+        } else {
+            setTimeout(() => {
+                showNextRecoveryWord();
+            }, 1000);
+        }
+    } else {
+        // Modo normal
+       let pointsToAdd = 1;
+if (currentEvent === 'star_rain') {
+    pointsToAdd = 2; // Doble puntos durante lluvia de estrellas
+}
+
+score += pointsToAdd;
+levelScore += pointsToAdd;
+        document.getElementById('score').textContent = score;
+        document.getElementById('feedback').textContent = 'Correct!';
+// 🚀 Verificar si se alcanzó el puntaje máximo
+
+
+        document.getElementById('feedback').style.color = '#00ff00';
+        wordIndex++;
+        document.getElementById('answer').value = '';
+        
+        correctSound.currentTime = 0;
+        correctSound.play().catch(e => console.log('Error playing correct sound:', e));
+        
+        errorCount = 0;
+// Incrementar racha de respuestas correctas
+currentStreak++;
+if (currentStreak > maxStreak) {
+    maxStreak = currentStreak;
+}
+
+// Aplicar efectos visuales según la racha
+updateStreakVisuals();
+        
+        // Verificar evento sorpresa después de respuesta correcta
+        checkForRandomEvent();
+        
+        setTimeout(() => {
+            nextWord();
+        }, 500);
+    }
+}
+
+function handleIncorrectAnswer(correctAnswers) {
+    if (isRecovering) {
+        // código para modo recuperación...
+    } else {
+        // Modo normal - reducir energía mágica
+        magicEnergy--;
+        updateEnergyDisplay();
+        
+        // ¡¡¡MOVER ESTAS LÍNEAS AQUÍ!!!
+        // Reiniciar racha en respuesta incorrecta
+        currentStreak = 0;
+        removeStreakVisuals();
+        
+        // Marcar palabra como difícil
+        markWordAsDifficult(currentWord);
+        
+        const correctAnswerText = correctAnswers.join(', ');
+        document.getElementById('feedback').textContent = `Energy lost! Correct: ${correctAnswerText}`;
+        document.getElementById('feedback').style.color = '#ff0000';
+        
+        incorrectSound.currentTime = 0;
+        incorrectSound.play().catch(e => console.log('Error playing incorrect sound:', e));
+        
+        // Verificar si se acabó la energía
+        if (magicEnergy <= 0) {
+            setTimeout(() => {
+                startEnergyRecovery();
+            }, 2000);
+            return;
+        }
+        
+        // Continuar con palabra diferente
+        setTimeout(() => {
+            document.getElementById('answer').value = '';
+            showDifferentWord();
+        }, 2000);
+    }
+}
+
+
+function completeEnergyRecovery() {
+ document.getElementById('view-leaderboard-start').classList.add('hidden');
+    magicEnergy = 3; // Recuperar energía parcialmente
+    isRecovering = false;
+    recoveryWordsCorrect = 0;
+    
+    // Restaurar interfaz normal
+    document.getElementById('level-title').textContent = levels[currentLevel].name;
+    document.getElementById('feedback').textContent = 'Energy restored! Continue your trial!';
+    document.getElementById('feedback').style.color = '#00ff4c';
+    
+    updateEnergyDisplay();
+    
+    // Reanudar timer
+    startTimer();
+    
+    // Continuar con el juego normal
+    setTimeout(() => {
+        nextWord();
+    }, 1500);
+}
+function markWordAsDifficult(word) {
+    // Inicializar contador si no existe
+    if (!wordFailCount[word]) {
+        wordFailCount[word] = 0;
+    }
+    
+    wordFailCount[word]++;
+    
+    // Marcar como difícil después de 3 fallos
+    if (wordFailCount[word] >= 3) {
+        difficultWords[word] = true;
+        console.log(`Palabra marcada como difícil: ${word}`);
+    }
+}
+
+function getDifficultWordsForLevel() {
+    const levelWords = Object.keys(levels[currentLevel].words);
+    const difficultInThisLevel = levelWords.filter(word => difficultWords[word]);
+    return difficultInThisLevel;
+}
+
+
+function selectWordsWithDifficulty() {
+    const level = levels[currentLevel];
+    const allWords = Object.keys(level.words || {});
+    if (!usedWordsByLevel[currentLevel]) usedWordsByLevel[currentLevel] = new Set();
+
+    const difficultInLevel = getDifficultWordsForLevel();
+    selectedWords = [];
+
+    // incluir hasta 4 difíciles
+    let difficultCandidates = difficultInLevel.filter(w => !usedWordsByLevel[currentLevel].has(w));
+    const numDifficult = Math.min(4, difficultCandidates.length);
+    for (let i = 0; i < numDifficult; i++) {
+        selectedWords.push(difficultCandidates[i]);
+        usedWordsByLevel[currentLevel].add(difficultCandidates[i]);
+    }
+
+    // mezclar el resto
+    let remainingWords = allWords.filter(w => !selectedWords.includes(w));
+    for (let i = remainingWords.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [remainingWords[i], remainingWords[j]] = [remainingWords[j], remainingWords[i]];
+    }
+
+    // rellenar hasta 10
+    for (let i = 0; i < remainingWords.length && selectedWords.length < 10; i++) {
+        selectedWords.push(remainingWords[i]);
+        usedWordsByLevel[currentLevel].add(remainingWords[i]);
+    }
+
+    // si no llegamos a 10, reiniciar usadas y tomar más
+    if (selectedWords.length < 10) {
+        usedWordsByLevel[currentLevel].clear();
+        remainingWords = allWords.filter(w => !selectedWords.includes(w));
+        for (let i = 0; i < remainingWords.length && selectedWords.length < 10; i++) {
+            selectedWords.push(remainingWords[i]);
+            usedWordsByLevel[currentLevel].add(remainingWords[i]);
+        }
+    }
+
+    // barajar orden final
+    for (let i = selectedWords.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [selectedWords[i], selectedWords[j]] = [selectedWords[j], selectedWords[i]];
+    }
+}
+
+
+function checkForRandomEvent() {
+    if (eventActive) return; // Ya hay un evento activo
+    
+    const randomNum = Math.random() * 1000; // Número entre 0 y 1000
+    
+    if (randomNum < 5) { // 0.5% de probabilidad (1 en 200)
+        triggerEvent('legendary_power');
+    } else if (randomNum < 15) { // 1% de probabilidad (1 en 100)
+        triggerEvent('star_rain');
+    }
+}
+
+function triggerEvent(eventType) {
+    eventActive = true;
+    currentEvent = eventType;
+    
+    if (eventType === 'star_rain') {
+        startStarRainEvent();
+    } else if (eventType === 'legendary_power') {
+        startLegendaryPowerEvent();
+    }
+}
+
+function startStarRainEvent() {
+    eventTimeLeft = 20; // 20 segundos
+    
+    // Mostrar notificación del evento
+    showEventNotification('⭐ STAR RAIN EVENT! ⭐', 'Double points for 20 seconds!');
+    
+    // Iniciar contador del evento
+    const eventInterval = setInterval(() => {
+        eventTimeLeft--;
+        updateEventDisplay();
+        
+        if (eventTimeLeft <= 0) {
+            endStarRainEvent();
+            clearInterval(eventInterval);
+        }
+    }, 1000);
+}
+
+function startLegendaryPowerEvent() {
+    const powers = [
+        'Time Freeze: +30 seconds',
+        'Energy Shield: +3 magic energy',
+        'Word Reveal: See next 3 answers',
+        'Double XP: 2x points for this level',
+        'Phoenix Resurrection: Immunity to next 3 errors'
+    ];
+    
+    const randomPower = powers[Math.floor(Math.random() * powers.length)];
+    
+    showEventNotification('🌟 LEGENDARY POWER! 🌟', `You gained: ${randomPower}`);
+    
+    // Aplicar el poder
+    applyLegendaryPower(randomPower);
+    
+    eventActive = false; // Los poderes legendarios son instantáneos
+}
+
+function applyLegendaryPower(power) {
+    if (power.includes('Time Freeze')) {
+        timeLeft += 30;
+        updateTimer();
+    } else if (power.includes('Energy Shield')) {
+        magicEnergy = Math.min(5, magicEnergy + 3);
+        updateEnergyDisplay();
+    } else if (power.includes('Double XP')) {
+        // Marcar para duplicar puntos este nivel
+        currentEvent = 'double_xp';
+    }
+    // Otros poderes se pueden implementar según necesidades
+}
+
+function endStarRainEvent() {
+    eventActive = false;
+    currentEvent = null;
+    hideEventDisplay();
+}
+
+function showEventNotification(title, message) {
+    // Crear elemento de notificación temporal
+    const notification = document.createElement('div');
+    notification.innerHTML = `
+        <div style="
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid #ffcc00;
+            text-align: center;
+            z-index: 1000;
+            font-size: 1.2em;
+            animation: pulse 0.5s ease-in-out;
+        ">
+            <h3>${title}</h3>
+            <p>${message}</p>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Remover después de 3 segundos
+    setTimeout(() => {
+        document.body.removeChild(notification);
+    }, 3000);
+}
+
+function updateEventDisplay() {
+    if (currentEvent === 'star_rain') {
+        const minutes = Math.floor(eventTimeLeft / 60);
+        const seconds = eventTimeLeft % 60;
+        document.getElementById('feedback').textContent = `⭐ STAR RAIN: ${minutes}:${seconds.toString().padStart(2, '0')} ⭐`;
+        document.getElementById('feedback').style.color = '#ffcc00';
+    }
+}
+
+function hideEventDisplay() {
+    if (document.getElementById('feedback').textContent.includes('STAR RAIN')) {
+        document.getElementById('feedback').textContent = '';
+    }
+}
+
+function updateStreakVisuals() {
+  const timerCircle = document.getElementById('timer');
+  const container = document.querySelector('.container');
+  const streakIndicator = getOrCreateStreakIndicator();
+
+  // 🔄 Limpiar antes de aplicar nuevo efecto
+  container.classList.remove(
+    'inferno-background',
+    'stormy-background',
+    'cosmic-background',
+    'streak-glow'
+  );
+  timerCircle.classList.remove(
+    'inferno-effect',
+    'thunderstorm-effect',
+    'energy-effect',
+    'timer-streak'
+  );
+  document.body.style.background = ''; // quitar fondo rojo del body
+
+  // transición suave en el timer
+  timerCircle.classList.add('timer-smooth');
+
+  // 🌌 Cosmic Streak
+  if (currentStreak >= 60) {
+    timerCircle.classList.add('timer-streak', 'energy-effect');
+    container.classList.add('streak-glow', 'cosmic-background');
+    streakIndicator.textContent = `🌌 COSMIC STREAK: ${currentStreak} 🌌`;
+    streakIndicator.style.color = '#bb00ff';
+
+    // partículas cósmicas
+    for (let i = 0; i < 20; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.top = Math.random() * container.offsetHeight + "px";
+      particle.style.left = Math.random() * container.offsetWidth + "px";
+      container.appendChild(particle);
+      setTimeout(() => particle.remove(), 2000);
+    }
+
+  // ⚡ Thunderstorm Streak
+  } else if (currentStreak >= 40) {
+    timerCircle.classList.add('timer-streak', 'energy-effect', 'thunderstorm-effect');
+    container.classList.add('streak-glow', 'stormy-background');
+    streakIndicator.textContent = `⚡ THUNDERSTORM STREAK: ${currentStreak} ⚡`;
+    streakIndicator.style.color = '#00ccff';
+    streakIndicator.style.textShadow = '0 0 10px #00ccff';
+
+  // 🔥 Inferno Streak
+  } else if (currentStreak >= 20) {
+    timerCircle.classList.add('timer-streak', 'energy-effect', 'inferno-effect');
+    container.classList.add('streak-glow', 'inferno-background');
+    streakIndicator.textContent = `🔥 INFERNO STREAK: ${currentStreak} 🔥`;
+    streakIndicator.style.color = '#ff3300';
+
+    // Fondo fuego opcional en el body
+    document.body.style.background = "linear-gradient(45deg, #660000, #ff3300, #660000)";
+
+  // 🔥 Master Streak
+  } else if (currentStreak >= 10) {
+    timerCircle.classList.add('timer-streak', 'energy-effect');
+    container.classList.add('streak-glow');
+    streakIndicator.textContent = `🔥 MASTER STREAK: ${currentStreak} 🔥`;
+    streakIndicator.style.color = '#ff6b35';
+
+  // ⚡ Lightning Streak
+  } else if (currentStreak >= 7) {
+    timerCircle.classList.add('timer-streak');
+    container.classList.add('streak-glow');
+    streakIndicator.textContent = `⚡ LIGHTNING STREAK: ${currentStreak} ⚡`;
+    streakIndicator.style.color = '#ffcc00';
+
+  // 💫 Speed Streak
+  } else if (currentStreak >= 5) {
+    timerCircle.classList.add('timer-streak');
+    streakIndicator.textContent = `💫 SPEED STREAK: ${currentStreak} 💫`;
+    streakIndicator.style.color = '#00ff4c';
+
+  // ✨ Initial Streak
+  } else if (currentStreak >= 3) {
+    timerCircle.style.background = 'linear-gradient(45deg, #00ff4c, #33ff66)';
+    timerCircle.style.boxShadow = '0 0 10px #00ff4c';
+    streakIndicator.textContent = `✨ STREAK: ${currentStreak} ✨`;
+    streakIndicator.style.color = '#00ff4c';
+
+  // Sin racha
+  } else {
+    removeStreakVisuals();
+  }
+}
+
+function removeStreakVisuals() {
+  const timerCircle = document.getElementById('timer');
+  const container = document.querySelector('.container');
+  const streakIndicator = getOrCreateStreakIndicator();
+
+  // quitar clases del timer
+  timerCircle.classList.remove(
+    'timer-streak',
+    'energy-effect',
+    'inferno-effect',
+    'thunderstorm-effect'
+  );
+
+  // quitar fondos/brillos del contenedor
+  container.classList.remove(
+    'streak-glow',
+    'inferno-background',
+    'stormy-background',
+    'cosmic-background'
+  );
+
+  // quitar elementos dinámicos: partículas, overlays, ripples, chispas de fuego y relámpagos
+  document.querySelectorAll('.particle, .lightning-overlay, .ripple, .fire-spark, .lightning-bolt').forEach(el => el.remove());
+
+  // restaurar texto e indicadores
+  streakIndicator.textContent = '';
+  streakIndicator.style.color = '';
+  streakIndicator.style.textShadow = '';
+
+  // restaurar timer a estado normal
+  timerCircle.style.background = '';
+  timerCircle.style.backgroundColor = '';
+  timerCircle.style.boxShadow = '';
+  timerCircle.style.border = '';
+
+  // restaurar body
+  document.body.style.background = '';
+
+  // recolorear según tiempo restante (pequeño delay para que el DOM aplique estilos)
+  setTimeout(() => updateTimer(), 50);
+}
+
+function getOrCreateStreakIndicator() {
+    let indicator = document.getElementById('streak-indicator');
+    
+    if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.id = 'streak-indicator';
+        indicator.className = 'streak-indicator';
+        
+        // Insertar después del timer
+        const timer = document.getElementById('timer');
+        timer.parentNode.insertBefore(indicator, timer.nextSibling);
+    }
+    
+    return indicator;
+}
+function updateEnergyDisplay() {
+    // Buscar si ya existe el display de energía
+    let energyDisplay = document.getElementById('energy-display');
+    
+    if (!energyDisplay) {
+        // Crear display de energía si no existe
+        energyDisplay = document.createElement('div');
+        energyDisplay.id = 'energy-display';
+        energyDisplay.style.cssText = `
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            color: #00ff4c;
+            text-align: center;
+        `;
+        
+        // Insertar después del título del nivel
+        const levelTitle = document.getElementById('level-title');
+        levelTitle.parentNode.insertBefore(energyDisplay, levelTitle.nextSibling);
+    }
+    
+    // Actualizar contenido
+    let energySymbols = '';
+    for (let i = 0; i < 5; i++) {
+        if (i < magicEnergy) {
+            energySymbols += '💎 ';
+        } else {
+            energySymbols += '💀 ';
+        }
+    }
+    
+    energyDisplay.innerHTML = `Magic Energy: ${energySymbols}`;
+    
+    // Cambiar color según energía restante
+    if (magicEnergy <= 1) {
+        energyDisplay.style.color = '#ff0000';
+    } else if (magicEnergy <= 2) {
+        energyDisplay.style.color = '#ff9900';
+    } else {
+        energyDisplay.style.color = '#00ff4c';
+    }
+}
+
+function levelComplete() {
+    clearInterval(timerInterval);
+    document.getElementById('level-score').textContent = score;
+
+    // Referencias al contenedor y botón
+    const levelCompleteContent = document.querySelector('.level-complete-content');
+    const nextButton = document.getElementById('next-level-btn');
+
+    // ---- Limpiar cualquier elemento previo ----
+    const prevDT = document.getElementById('level-complete-datetime');
+    if (prevDT) prevDT.remove();
+
+    const existingStreak = document.getElementById('current-streak-display');
+    if (existingStreak) existingStreak.remove();
+
+    // ---- Mostrar racha actual si aplica ----
+    if (currentStreak > 0) {
+        const streakDisplay = document.createElement('p');
+        streakDisplay.id = 'current-streak-display';
+        streakDisplay.innerHTML = `Current Streak: ${currentStreak}`;
+        streakDisplay.style.color = '#ffcc00';
+        streakDisplay.style.fontSize = '1em';
+        streakDisplay.style.marginTop = '10px';
+        levelCompleteContent.insertBefore(streakDisplay, nextButton);
+    }
+
+    // ---- Agregar fecha y hora actual (no se duplicará) ----
+    const levelDateTime = document.createElement('p');
+    levelDateTime.id = 'level-complete-datetime';
+    levelDateTime.style.cssText = 'font-size: 0.7em; color: #00ff4c; margin-top: 10px;';
+    levelDateTime.textContent = new Date().toLocaleString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+    levelCompleteContent.insertBefore(levelDateTime, nextButton);
+
+    // ---- Bonificación por evento (conserva tu lógica) ----
+    if (currentEvent === 'double_xp') {
+        levelScore *= 2;
+        score += levelScore;
+        document.getElementById('score').textContent = score;
+        document.getElementById('level-score').textContent = levelScore;
+    }
+
+    // ---- Mostrar la pantalla temporal de "level complete" ----
+    document.getElementById('level-complete').classList.remove('hidden');
+
+    // ---- Reproducir sonido de victoria si existe ----
+    if (victorySound) {
+        victorySound.currentTime = 0;
+        victorySound.play().catch(e => console.log('Error playing victory sound:', e));
+    }
+
+    // ---- Guardar progreso local ----
+    localStorage.setItem('difficultWords', JSON.stringify(difficultWords));
+    localStorage.setItem('wordFailCount', JSON.stringify(wordFailCount));
+}
+        function gameOver() {
+  document.getElementById('view-leaderboard-start').classList.remove('hidden');
+            clearInterval(timerInterval);
+startTop3Updates();
+ saveToLeaderboard(playerName, score);
+removeStreakVisuals();
+currentStreak = 0;
+maxStreak = 0;
+            updateHighestScore();
+           alert('Time is up!\nYour score: ' + score + '\n' + new Date().toLocaleString());
+
+    // Añadir fecha y hora en la pantalla de Game Over
+    const existingFinalDt = document.getElementById('final-datetime');
+    if (existingFinalDt) existingFinalDt.remove();
+    const finalDateTime = document.createElement('p');
+    finalDateTime.id = 'final-datetime';
+    finalDateTime.style.cssText = 'font-size: 0.8em; color: #ff3333; margin-top: 10px;';
+    finalDateTime.textContent = new Date().toLocaleString('en-US', { 
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', 
+      hour: '2-digit', minute: '2-digit', second: '2-digit' 
+    });
+    document.querySelector('.game-over-content').appendChild(finalDateTime);
+    document.getElementById('final-score').textContent = score;
+    document.getElementById('game-over').classList.remove('hidden');
+
+saveToLeaderboard(playerName, score);
+    showLeaderboard();
+
+
+            document.getElementById('player-setup').classList.remove('hidden');
+            document.getElementById('start-btn').classList.remove('hidden');
+            document.getElementById('game').classList.add('hidden');
+            
+            // Show the game image again when returning to start screen
+            document.getElementById('game-header-image').classList.remove('hidden');
+            
+            // Play music again when returning to start screen
+            if (backgroundMusic && musicEnabled) {
+                backgroundMusic.play().catch(e => console.log('Error playing music:', e));
+            }
+        }
+        
+     function showGameOver() {
+    // En lugar de mostrar game over, iniciar recuperación
+    if (magicEnergy <= 0 && !isRecovering) {
+        startEnergyRecovery();
+    }
+}
+
+function startEnergyRecovery() {
+    isRecovering = true;
+    clearInterval(timerInterval); // Pausar el timer principal
+    
+    // Cambiar la interfaz para modo recuperación
+    document.getElementById('word-to-translate').textContent = 'RECOVERING ENERGY...';
+    document.getElementById('level-title').textContent = 'Energy Recovery';
+    document.getElementById('feedback').textContent = 'Answer 3 easy words correctly to restore your magic energy!';
+    document.getElementById('feedback').style.color = '#00ff4c';
+    
+    // Reiniciar contador de errores para la recuperación
+    errorCount = 0;
+    recoveryWordsCorrect = 0;
+    
+    // Seleccionar palabras fáciles para recuperación
+    selectRecoveryWords();
+    showNextRecoveryWord();
+}
+
+let recoveryWords = [];
+let recoveryWordsCorrect = 0;
+let currentRecoveryIndex = 0;
+
+function selectRecoveryWords() {
+    // Seleccionar palabras del primer nivel (más fáciles)
+    const easyWords = Object.keys(levels[0].words);
+    recoveryWords = [];
+    
+    // Tomar 5 palabras aleatorias del nivel fácil
+    for (let i = 0; i < 5; i++) {
+        const randomIndex = Math.floor(Math.random() * easyWords.length);
+        if (!recoveryWords.includes(easyWords[randomIndex])) {
+            recoveryWords.push(easyWords[randomIndex]);
+        }
+    }
+    currentRecoveryIndex = 0;
+}
+
+function showNextRecoveryWord() {
+    if (currentRecoveryIndex < recoveryWords.length) {
+        currentWord = recoveryWords[currentRecoveryIndex];
+        document.getElementById('word-to-translate').textContent = currentWord;
+        document.getElementById('answer').value = '';
+        document.getElementById('feedback').textContent = `Recovery word ${recoveryWordsCorrect + 1}/3`;
+    }
+}
+
+        
+        // Function for try again button
+        function tryAgain() {
+stopTop3Updates();
+            document.getElementById('game-over').classList.add('hidden');
+            startGame();
+        }
+        
+        
+function showDifferentWord() {
+    if (!Array.isArray(selectedWords) || selectedWords.length === 0) {
+        selectWordsWithDifficulty();
+    }
+
+    let pool = selectedWords.filter(w => w !== currentWord);
+
+    if (pool.length === 0) {
+        selectWordsWithDifficulty();
+        pool = selectedWords.filter(w => w !== currentWord);
+    }
+
+    if (pool.length === 0) {
+        const lvl = levels[currentLevel];
+        const allWords = Object.keys(lvl.words || {});
+        pool = allWords.filter(w => w !== currentWord);
+    }
+
+    if (pool.length === 0) {
+        console.warn('No hay palabras disponibles para este nivel:', currentLevel);
+        return;
+    }
+
+    const next = pool[Math.floor(Math.random() * pool.length)];
+    currentWord = next;
+
+    if (!usedWordsByLevel[currentLevel]) usedWordsByLevel[currentLevel] = new Set();
+    usedWordsByLevel[currentLevel].add(currentWord);
+
+    const display = document.getElementById('word-to-translate');
+    if (display) display.textContent = currentWord;
+
+    const ans = document.getElementById('answer');
+    if (ans) ans.value = '';
+}
+
+            // If no other words available, we'll just keep the current word
+        function addBonusTime() {
+            if (!bonusTimeUsed) {
+                timeLeft += 10;
+                updateTimer();
+                bonusTimeUsed = true;
+                document.getElementById('bonus-time-btn').classList.add('disabled');
+                
+                // Play a sound when adding time (using correct sound for feedback)
+                correctSound.currentTime = 0;
+                correctSound.play()
+                    .catch(e => console.log('Error playing sound on time bonus:', e));
+            }
+        }
+        
+        function skipWord() {
+            if (!skipWordUsed) {
+                wordIndex++;
+                document.getElementById('answer').value = '';
+                skipWordUsed = true;
+                document.getElementById('skip-word-btn').classList.add('disabled');
+                
+                // Play a sound when skipping (using correct sound for feedback)
+                correctSound.currentTime = 0;
+                correctSound.play()
+                    .catch(e => console.log('Error playing sound on skip:', e));
+                
+                nextWord();
+            }
+        }
+        
+        function resetPowerups() {
+            bonusTimeUsed = false;
+            skipWordUsed = false;
+            document.getElementById('bonus-time-btn').classList.remove('disabled');
+            document.getElementById('skip-word-btn').classList.remove('disabled');
+        }
+        
+        // Function to update highest score
+        function updateHighestScore() {
+            const currentHighest = localStorage.getItem('highestScore') || 0;
+            if (score > currentHighest) {
+                localStorage.setItem('highestScore', score);
+                document.getElementById('highest-score').textContent = score;
+            }
+
+function showEpicVictoryMessage() {
+    // Crear el contenedor del mensaje
+    const epicMessage = document.createElement('div');
+    epicMessage.innerHTML = `
+        <div style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeIn 1s ease-in-out;
+        ">
+            <div style="
+                background: linear-gradient(45deg, #ffcc00, #ff3300, #ff0099);
+                color: white;
+                padding: 40px;
+                border-radius: 20px;
+                text-align: center;
+                font-size: 2em;
+                font-family: 'Press Start 2P', cursive;
+                box-shadow: 0 0 30px #ffcc00;
+                animation: epicPulse 2s infinite;
+            ">
+                🌟🔥 LEGENDARY ACHIEVEMENT! 🔥🌟 <br><br>
+                You reached the MAX SCORE of 70!
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(epicMessage);
+
+    // Animaciones CSS
+    const style = document.createElement('style');
+    style.innerHTML = `
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes epicPulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px #ffcc00; }
+            50% { transform: scale(1.1); box-shadow: 0 0 50px #ff0099; }
+            100% { transform: scale(1); box-shadow: 0 0 20px #ffcc00; }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Cerrar automáticamente después de 5s
+    setTimeout(() => {
+        document.body.removeChild(epicMessage);
+    }, 5000);
+}
+        }
+
+// Función épica de victoria para adolescentes
+function showEpicVictoryScreen() {
+window.leaderboardAPI = "https://script.google.com/macros/s/AKfycby6UfMDtuB3bE1MmTwKuHO0grJlKcmrpn_CsMZO0Cils1PtAYVJ_jXfrGIn06TFDbiamw/exec";
+saveToLeaderboard(playerName, score);
+    // Crear el contenedor principal
+    const epicContainer = document.createElement('div');
+    epicContainer.id = 'epic-victory-screen';
+    epicContainer.innerHTML = `
+        <div class="epic-overlay">
+            <div class="epic-content">
+                <div class="epic-title">🏆 LEGENDARY MASTER! 🏆</div>
+                <div class="epic-subtitle">You have conquered ALL trials!</div>
+                
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-label">FINAL SCORE:</span>
+                        <span class="stat-value epic-score">${score}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">HIGHEST STREAK:</span>
+                        <span class="stat-value epic-streak">${maxStreak}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">MASTERY LEVEL:</span>
+                        <span class="stat-value epic-level">LEGENDARY</span>
+                    </div>
+                </div>
+                
+                <div class="epic-message">
+                    You are now a TRUE WORD MASTER FROM ARCANIS!<br>
+                    Your legend will be remembered forever! 🌟
+                </div>
+                
+                <button class="epic-button" onclick="closeEpicVictory()">
+                    ✨ CLAIM YOUR GLORY ✨
+                </button>
+            </div>
+            
+            <!-- Efectos de partículas -->
+            <div class="particles-container">
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+            </div>
+        </div>
+    `;
+    
+    // Agregar estilos épicos
+    const epicStyles = document.createElement('style');
+    epicStyles.innerHTML = `
+     .epic-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, 
+        rgba(255,0,150,0.9) 0%, 
+        rgba(255,100,0,0.9) 25%, 
+        rgba(255,200,0,0.9) 50%, 
+        rgba(150,0,255,0.9) 75%, 
+        rgba(0,255,200,0.9) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: epicFadeIn 1s ease-out;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.epic-content {
+    background: linear-gradient(135deg, #1a1a1a, #333, #1a1a1a);
+    border: 3px solid #ffcc00;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+    max-width: 95vw;
+    max-height: 95vh;
+    box-shadow: 0 0 30px rgba(255,204,0,0.6);
+    animation: epicBounceIn 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    position: relative;
+    overflow: visible;
+    box-sizing: border-box;
+}
+
+.epic-title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.2em;
+    background: linear-gradient(45deg, #ffcc00, #ff3300, #ff0099, #3300ff, #00ff99);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rainbowShift 2s ease-in-out infinite, 
+              epicPulse 3s ease-in-out infinite;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.epic-subtitle {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7em;
+    color: #00ff4c;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px #00ff4c;
+    line-height: 1.4;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+.stats-container {
+    margin: 15px 0;
+    padding: 15px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    border: 2px solid #ffcc00;
+}
+
+.stat-item {
+    margin: 10px 0;
+    font-family: 'Press Start 2P', cursive;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.stat-label {
+    color: #ffffff;
+    font-size: 0.6em;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 0.9em;
+    font-weight: bold;
+    text-shadow: 0 0 15px currentColor;
+}
+
+.epic-score {
+    color: #ffcc00;
+    animation: numberGlow 2s ease-in-out infinite;
+}
+
+.epic-streak {
+    color: #ff3300;
+    animation: numberGlow 2s ease-in-out infinite 0.5s;
+}
+
+.epic-level {
+    background: linear-gradient(45deg, #ff0099, #ffcc00, #00ff99);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rainbowShift 1.5s linear infinite;
+}
+
+.epic-message {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.6em;
+    color: #ffffff;
+    margin: 15px 0;
+    line-height: 1.6;
+    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+    animation: messageGlow 3s ease-in-out infinite;
+}
+
+.epic-button {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7em;
+    padding: 15px 25px;
+    background: linear-gradient(45deg, #ff0099, #ffcc00, #00ff4c);
+    background-size: 300% 300%;
+    color: white;
+    border: 2px solid #ffffff;
+    border-radius: 10px;
+    cursor: pointer;
+    animation: buttonRainbow 2s ease-in-out infinite,
+              buttonBounce 3s ease-in-out infinite;
+    transition: all 0.3s ease;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    box-shadow: 0 3px 10px rgba(255,204,0,0.5);
+    margin-top: 10px;
+}
+
+.epic-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(255,204,0,0.8);
+}
+
+/* Media query específica para móviles muy pequeños */
+@media (max-width: 480px) {
+    .epic-title {
+        font-size: 1em;
+        margin-bottom: 10px;
+    }
+    
+    .epic-subtitle {
+        font-size: 0.6em;
+        margin-bottom: 15px;
+    }
+    
+    .epic-message {
+        font-size: 0.5em;
+        line-height: 1.5;
+        margin: 10px 0;
+    }
+    
+    .epic-button {
+        font-size: 0.6em;
+        padding: 12px 20px;
+    }
+    
+    .stat-label {
+        font-size: 0.5em;
+    }
+    
+    .stat-value {
+        font-size: 0.8em;
+    }
+}
+
+@media (max-height: 600px) {
+    .epic-content {
+        padding: 15px;
+        max-height: 90vh;
+    }
+    
+    .epic-title {
+        font-size: 0.9em;
+        margin-bottom: 8px;
+    }
+    
+    .epic-subtitle {
+        font-size: 0.5em;
+        margin-bottom: 12px;
+    }
+    
+    .stats-container {
+        margin: 10px 0;
+        padding: 10px;
+    }
+    
+    .stat-item {
+        margin: 8px 0;
+    }
+    
+    .epic-message {
+        font-size: 0.45em;
+        margin: 8px 0;
+    }
+}
+        
+        /* Animaciones */
+        @keyframes epicFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes epicBounceIn {
+            0% { 
+                opacity: 0;
+                transform: scale(0.3) rotate(-10deg);
+            }
+            50% { 
+                opacity: 1;
+                transform: scale(1.05) rotate(2deg);
+            }
+            70% { transform: scale(0.9) rotate(-1deg); }
+            100% { 
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+        
+        @keyframes rainbowShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes epicPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes textGlow {
+            0%, 100% { text-shadow: 0 0 20px rgba(255,204,0,0.8); }
+            50% { text-shadow: 0 0 40px rgba(255,204,0,1), 0 0 60px rgba(255,204,0,0.8); }
+        }
+        
+        @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        @keyframes numberGlow {
+            0%, 100% { 
+                transform: scale(1);
+                filter: brightness(1);
+            }
+            50% { 
+                transform: scale(1.1);
+                filter: brightness(1.5);
+            }
+        }
+        
+        @keyframes messageGlow {
+            0%, 100% { opacity: 0.9; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes buttonRainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes buttonBounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        /* Partículas flotantes */
+        .particles-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ffcc00;
+            border-radius: 50%;
+            animation: float 6s linear infinite;
+            box-shadow: 0 0 10px #ffcc00;
+        }
+        
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; background: #ff0099; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 1s; background: #00ff4c; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 2s; background: #ffcc00; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 3s; background: #3300ff; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 4s; background: #ff3300; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 5s; background: #00ffff; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 0.5s; background: #ff6600; }
+        .particle:nth-child(8) { left: 80%; animation-delay: 1.5s; background: #9900ff; }
+        .particle:nth-child(9) { left: 90%; animation-delay: 2.5s; background: #ffff00; }
+        .particle:nth-child(10) { left: 15%; animation-delay: 3.5s; background: #ff0066; }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    `;
+    
+    document.head.appendChild(epicStyles);
+    document.body.appendChild(epicContainer);
+    
+    // Reproducir sonido de victoria si está disponible
+    if (victorySound) {
+        victorySound.currentTime = 0;
+        victorySound.play().catch(e => console.log('Error playing victory sound:', e));
+    }
+}
+
+// Función para cerrar la pantalla épica
+function closeEpicVictory() {
+    const epicScreen = document.getElementById('epic-victory-screen');
+    if (epicScreen) {
+        epicScreen.style.animation = 'epicFadeOut 0.5s ease-in';
+        setTimeout(() => {
+            epicScreen.remove();
+            // Regresar al menú principal
+            document.getElementById('game').classList.add('hidden');
+            document.getElementById('player-setup').classList.remove('hidden');
+            document.getElementById('start-btn').classList.remove('hidden');
+            document.getElementById('game-header-image').classList.remove('hidden');
+            
+            // Reanudar música si está disponible
+            if (backgroundMusic && musicEnabled) {
+                backgroundMusic.play().catch(e => console.log('Error playing music:', e));
+            }
+        }, 500);
+    }
+}
+
+// Agregar animación de salida
+const exitAnimation = document.createElement('style');
+exitAnimation.innerHTML = `
+    @keyframes epicFadeOut {
+        from { opacity: 1; transform: scale(1); }
+        to { opacity: 0; transform: scale(0.8); }
+    }
+`;
+document.head.appendChild(exitAnimation);
+    
+
+function updateGameClock() {
+  const now = new Date();
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', 
+                    hour: '2-digit', minute: '2-digit', second: '2-digit' };
+  document.getElementById('game-clock').textContent = now.toLocaleString('en-US', options);
+}
+setInterval(updateGameClock, 1000);
+
+ // cambia por la tuya
+
+function saveToLeaderboard(playerName, score) {
+  fetch(window.leaderboardAPI, {
+    method: 'POST',
+    body: JSON.stringify({ name: playerName, score: score })
+  }).then(() => console.log("Score saved!"))
+    .catch(err => console.error("Error saving score:", err));
+}
+
+function showLeaderboard() {
+  fetch(window.leaderboardAPI)
+    .then(res => res.json())
+    .then(data => {
+      // Ordenar de mayor a menor
+      data.sort((a, b) => b.score - a.score);
+      const html = data.slice(0, 10)
+        .map((p, i) => `<p>${i + 1}. ${p.name} — ${p.score}</p>`)
+        .join('');
+      document.getElementById('leaderboard').innerHTML = `<h2>🏆 Leaderboard</h2>${html}`;
+    })
+    .catch(err => console.error("Error loading leaderboard:", err));
+}
+
+
+</script>
+
+
+<!-- Leaderboard modal -->
+<style>
+  @keyframes epicFadeInModal { from { opacity: 0; transform: scale(0.9); filter: drop-shadow(0 0 0 #ffcc00); } to { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 12px #ffcc00); } }
+  #leaderboard-modal-backdrop { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 2000; }
+  #leaderboard-modal { width: 92%; max-width:520px; background: #003300; border: 8px solid #ffcc00; padding:18px; border-radius:12px; color:#ffcc00; font-family:'Press Start 2P', cursive; text-align:left; max-height:80vh; overflow:auto; animation: epicFadeInModal 420ms ease-out; }
+  #leaderboard-modal h2 { margin-top:0; color:#ffcc00; font-size:1em; text-align:center; }
+  #leaderboard-list { font-size:0.7em; color:#ffffff; margin-top:10px; }
+  #leaderboard-list p { margin:6px 0; color:#ffffff; }
+  .close-leaderboard { display:inline-block; margin-top:10px; padding:6px 10px; background:#ffcc00; color:#000; border-radius:6px; cursor:pointer; font-family:'Press Start 2P',cursive; font-size:0.7em; }
+  .download-csv { display:inline-block; margin-left:8px; padding:6px 10px; background:#00ff4c; color:#000; border-radius:6px; cursor:pointer; font-family:'Press Start 2P',cursive; font-size:0.7em; }
+</style>
+
+<div id="leaderboard-modal-backdrop" aria-hidden="true">
+  <div id="leaderboard-modal" role="dialog" aria-modal="true" aria-labelledby="leaderboard-title">
+    <h2 id="leaderboard-title">🏆 Global Leaderboard</h2>
+    <div id="leaderboard-list">
+      <p>Loading scores...</p>
+    </div>
+    <div style="text-align:center; margin-top:12px;">
+      <span id="close-leaderboard" class="close-leaderboard">Close</span>
+      <span id="download-csv" class="download-csv">Download CSV</span>
+    </div>
+  </div>
+</div>
+
+<script>
+window.leaderboardAPI = "https://script.google.com/macros/s/AKfycby6UfMDtuB3bE1MmTwKuHO0grJlKcmrpn_CsMZO0Cils1PtAYVJ_jXfrGIn06TFDbiamw/exec";
+
+// 🔥 Listener global para los botones de leaderboard
+document.addEventListener('click', function(e) {
+    const id = e.target.id;
+    if (id === 'view-leaderboard-start' || id === 'show-leaderboard-btn' || id === 'view-leaderboard-after-victory') {
+        e.stopPropagation();
+        showLeaderboard();
+    }
+});
+
+
+
+// ✅ NUEVO CÓDIGO CON JSONP (SIN CORS)
+
+function saveToLeaderboard(playerName, score) {
+  try {
+    const name = encodeURIComponent(playerName || document.getElementById('player-name-display')?.textContent || document.getElementById('player-name-input')?.value || 'Player');
+    const scoreNum = Number(score);
+    
+    // Enviar usando imagen invisible (evita CORS)
+    const img = new Image();
+    img.src = `${window.leaderboardAPI}?action=save&name=${name}&score=${scoreNum}`;
+    
+    console.log('Leaderboard: score sent', playerName, scoreNum);
+  } catch (e) { 
+    console.error('Save error:', e); 
+  }
+}
+
+function showLeaderboard() {
+  const list = document.getElementById('leaderboard-list');
+  list.innerHTML = '<p>Loading scores...</p>';
+  
+  // Limpiar scripts anteriores
+  const oldScript = document.getElementById('leaderboard-jsonp-script');
+  if (oldScript) oldScript.remove();
+  
+  // Crear script JSONP
+  const script = document.createElement('script');
+  script.id = 'leaderboard-jsonp-script';
+  script.src = `${window.leaderboardAPI}?callback=handleLeaderboardData&t=${Date.now()}`;
+  
+  script.onerror = function() {
+    list.innerHTML = '<p>Error loading scores. Check connection.</p>';
+    openLeaderboardModal();
+  };
+  
+  document.body.appendChild(script);
+  
+  // Timeout de seguridad
+  setTimeout(() => {
+    if (list.innerHTML.includes('Loading')) {
+      list.innerHTML = '<p>Timeout loading scores.</p>';
+      openLeaderboardModal();
+    }
+  }, 8000);
+}
+
+// Callback para recibir datos JSONP - TOP 20
+function handleLeaderboardData(data) {
+  const list = document.getElementById('leaderboard-list');
+  
+  try {
+    if (!Array.isArray(data) || data.length === 0) { 
+      list.innerHTML = '<p>No scores yet. Be the first!</p>'; 
+      openLeaderboardModal(); 
+      return; 
+    }
+    
+    // Ordenar de mayor a menor
+    data.sort((a,b) => Number(b.score) - Number(a.score));
+    
+    // 🏆 LIMITAR A TOP 20
+    const top20 = data.slice(0, 20);
+    
+    const html = top20.map((r,i) => {
+      const date = r.date ? (new Date(r.date)).toLocaleString() : '';
+      
+      // Emojis especiales para top 3
+      let medal = '';
+      if (i === 0) medal = '🥇 ';
+      else if (i === 1) medal = '🥈 ';
+      else if (i === 2) medal = '🥉 ';
+      
+      return "<p>" + medal + (i+1) + ". " + escapeHtml(r.name) + " — " + escapeHtml(String(r.score)) + (date ? " — " + escapeHtml(date) : "") + "</p>";
+    }).join('');
+    
+    // Mostrar total de jugadores si hay más de 20
+    const totalPlayers = data.length;
+    const footer = totalPlayers > 20 
+      ? `<p style="margin-top:15px; color:#00ff4c; font-size:0.6em;">Showing top 20 of ${totalPlayers} players</p>`
+      : '';
+    
+    list.innerHTML = html + footer;
+    openLeaderboardModal();
+  } catch (e) {
+    console.error('Error displaying leaderboard:', e);
+    list.innerHTML = '<p>Error displaying scores.</p>';
+    openLeaderboardModal();
+  }
+}
+
+// Función para mostrar TOP 3 en vivo durante el juego
+function loadTop3Display() {
+  const top3List = document.getElementById('top3-list');
+  
+  if (!top3List) return;
+  
+  top3List.innerHTML = '<p style="color:#00ff4c;">Loading...</p>';
+  
+  // Crear callback temporal
+  window.top3Callback = function(data) {
+    try {
+      if (!Array.isArray(data) || data.length === 0) {
+        top3List.innerHTML = '<p style="color:#ffffff;">No scores yet!</p>';
+        return;
+      }
+      
+      // Ordenar y tomar top 3
+      data.sort((a,b) => Number(b.score) - Number(a.score));
+      const top3 = data.slice(0, 3);
+      
+      // Crear HTML con medallas
+      const medals = ['🥇', '🥈', '🥉'];
+      const html = top3.map((player, i) => {
+        return `<p style="color:#ffffff; margin:5px 0;">
+          ${medals[i]} ${escapeHtml(player.name)}: <span style="color:#ffcc00;">${player.score}</span>
+        </p>`;
+      }).join('');
+      
+      top3List.innerHTML = html || '<p style="color:#ffffff;">No scores yet!</p>';
+      
+    } catch (e) {
+      console.error('Error loading top 3:', e);
+      top3List.innerHTML = '<p style="color:#ff3333;">Error loading</p>';
+    }
+  };
+  
+  // Cargar datos
+  const script = document.createElement('script');
+  script.src = `${window.leaderboardAPI}?callback=top3Callback&t=${Date.now()}`;
+  document.body.appendChild(script);
+}
+
+// Auto-actualizar TOP 3 cada 30 segundos durante el juego
+let top3Interval;
+
+function startTop3Updates() {
+  loadTop3Display(); // Cargar inmediatamente
+  
+  // Actualizar cada 30 segundos
+  if (top3Interval) clearInterval(top3Interval);
+  top3Interval = setInterval(() => {
+    loadTop3Display();
+  }, 30000); // 30 segundos
+}
+
+function stopTop3Updates() {
+  if (top3Interval) {
+    clearInterval(top3Interval);
+    top3Interval = null;
+  }
+}
+
+
+function escapeHtml(s) { 
+  if (!s) return ''; 
+  return s.replace(/[&<>"]/g, function(c) { 
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]); 
+  }); 
+}
+
+function openLeaderboardModal() { 
+  const backdrop = document.getElementById('leaderboard-modal-backdrop'); 
+  backdrop.style.display = 'flex'; 
+  backdrop.setAttribute('aria-hidden','false'); 
+  playModalSound(); 
+}
+
+function closeLeaderboardModal() { 
+  const backdrop = document.getElementById('leaderboard-modal-backdrop'); 
+  backdrop.style.display = 'none'; 
+  backdrop.setAttribute('aria-hidden','true'); 
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const viewStart = document.getElementById('view-leaderboard-start');
+  const closeBtn = document.getElementById('close-leaderboard');
+  const downloadBtn = document.getElementById('download-csv');
+  const showBtn = document.getElementById('show-leaderboard-btn');
+
+  if (viewStart) viewStart.addEventListener('click', function(e) { e.stopPropagation(); showLeaderboard(); });
+  if (closeBtn) closeBtn.addEventListener('click', closeLeaderboardModal);
+  if (downloadBtn) downloadBtn.addEventListener('click', downloadLeaderboardCSV);
+  if (showBtn) showBtn.addEventListener('click', function(e){ e.stopPropagation(); showLeaderboard(); });
+
+  const backdrop = document.getElementById('leaderboard-modal-backdrop');
+  backdrop.addEventListener('click', function(e){ if (e.target === backdrop) closeLeaderboardModal(); });
+
+  const gameOverEl = document.getElementById('game-over');
+  if (gameOverEl) {
+    const obs = new MutationObserver(mutations => {
+      mutations.forEach(m => {
+        if (m.attributeName === 'class') {
+          if (!gameOverEl.classList.contains('hidden')) {
+            const name = document.getElementById('player-name-display')?.textContent || document.getElementById('player-name-input')?.value || 'Player';
+            saveToLeaderboard(name, window.score || 0);
+            setTimeout(() => showLeaderboard(), 300);
+          }
+        }
+      });
+    });
+    obs.observe(gameOverEl, { attributes: true });
+  }
+
+  const levelCompleteEl = document.getElementById('level-complete');
+  if (levelCompleteEl) {
+    const obs2 = new MutationObserver(mutations => {
+      mutations.forEach(m => {
+        if (m.attributeName === 'class') {
+          if (!levelCompleteEl.classList.contains('hidden')) {
+            // victory send is handled in showEpicVictoryScreen
+          }
+        }
+      });
+    });
+    obs2.observe(levelCompleteEl, { attributes: true });
+  }
+});
+
+function downloadLeaderboardCSV() {
+  // Crear callback temporal para CSV
+  window.csvDownloadCallback = function(data) {
+    try {
+      if (!Array.isArray(data) || data.length === 0) { 
+        alert('No scores to download.'); 
+        return; 
+      }
+      const rows = [['Name','Score','Date']];
+      data.forEach(r => rows.push([r.name, r.score, r.date || '']));
+      const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); 
+      a.href = url; 
+      a.download = 'leaderboard.csv'; 
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch(e) {
+      console.error(e); 
+      alert('Failed to download.');
+    }
+  };
+  
+  const script = document.createElement('script');
+  script.src = `${window.leaderboardAPI}?callback=csvDownloadCallback&t=${Date.now()}`;
+  document.body.appendChild(script);
+}
+
+function playModalSound() {
+  try {
+    const audio = new Audio('https://freesound.org/data/previews/522/522375_11682929-lq.mp3');
+    audio.volume = 0.5;
+    audio.play().catch(e=>{});
+  } catch(e){}
+}
+
+</script>
+
+</body></html>
